@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Repository\DonationRepository;
 use App\Repository\UserLocationRepository;
+use App\Service\Connection;
+use PDO;
 use Port\Csv\CsvReader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,11 +20,14 @@ class MigrationDonationsFileCommand extends Command
 
     private UserLocationRepository $userLocationRepository;
 
-    public function __construct(DonationRepository $donationRepository, UserLocationRepository $userLocationRepository)
+    private PDO $pdo;
+
+    public function __construct(DonationRepository $donationRepository, UserLocationRepository $userLocationRepository, Connection $connection)
     {
         parent::__construct();
         $this->donationRepository = $donationRepository;
         $this->userLocationRepository = $userLocationRepository;
+        $this->pdo = $connection->getPdoConnection();
 
     }
 
@@ -41,52 +46,45 @@ class MigrationDonationsFileCommand extends Command
         $output->writeln(sprintf("\nMigrating from %s", $fullPath));
 
         $file = new \SplFileObject($fullPath);
-        $reader = new CsvReader($file, ',');
+        $reader = new CsvReader($file, ";");
         $reader->setHeaderRowNumber(0);
         return $reader;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-       $this->createDataBase();
+        $this->createDataBase();
 
-        // return this if there was no problem running the command
-        // (it's equivalent to returning int(0))
+        $this->handleDonations($input, $output);
+
         return Command::SUCCESS;
-
-        // or return this if some error happened during the execution
-        // (it's equivalent to returning int(1))
-        // return Command::FAILURE;
     }
 
 
     public function createDataBase()
     {
+        $query = 'CREATE DATABASE test_manon_marizy;';
+        $this->pdo->exec($query);
         $this->donationRepository->createTable();
         $this->userLocationRepository->createTable();
 
     }
 
-//    public function handleDonations(InputInterface $input, OutputInterface $output)
-//    {
-//        $reader = $this->initializeLoop('contact.csv', $input, $output);
-//        $i = 0;
-//        foreach ($reader as $row) {
-//            $this->donationRepository->insertData([
-//                'phoneNumber' => $row['Tel'],
-//                'amount' => intval($row['Montant'])
-//            ]);
-//            $this->userLocationRepository->insertData([
-//                'phoneNumber' => $row['Tel'],
-//                'date' => $row['Date'],
-//                'amount' => $row['Code Postal']
-//            ]);
-//            if ($i = 20){
-//                die;
-//            }
-//            $i++;
-//        }
-//
-//    }
+    public function handleDonations(InputInterface $input, OutputInterface $output)
+    {
+        $reader = $this->initializeLoop('contact.csv', $input, $output);
+        foreach ($reader as $row) {
+            $this->donationRepository->insertData([
+                'phoneNumber' => $row['Tel'],
+                'amount' => intval($row['Montant'])
+            ]);
+            $this->userLocationRepository->insertData([
+                'phoneNumber' => $row['Tel'],
+                'date' => $row['Date'],
+                'zipCode' => $row['Code postal']
+            ]);
+        }
+
+    }
 
 }

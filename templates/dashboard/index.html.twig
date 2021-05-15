@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>
+        <canvas id="barChart" data-donations-amount="{{ donationsAmount }}" data-nbOfPeople-donations="{{ nbOfPeopleDonations }}" width="200" height="200"></canvas>
+    </div>
+    <div>
+        <canvas id="pieChart" data-ten-departments-count-people="{{ tenDepartmentsCountPeople }}" data-ten-departments-numbers="{{ tenDepartmentsNumbers }}" width="200" height="200"></canvas>
+    </div>
+{% endblock %}
