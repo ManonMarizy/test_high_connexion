@@ -1,10 +1,23 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Dashboard
+{% endblock %}
+
 {% block body %}
-    <div>
-        <canvas id="barChart" data-donations-amount="{{ donationsAmount }}" data-nbOfPeople-donations="{{ nbOfPeopleDonations }}" width="200" height="200"></canvas>
-    </div>
-    <div>
-        <canvas id="pieChart" data-ten-departments-count-people="{{ tenDepartmentsCountPeople }}" data-ten-departments-numbers="{{ tenDepartmentsNumbers }}" width="200" height="200"></canvas>
+    <div class="m-3">
+        <h1 class="text-center m-5">Mon dashboard</h1>
+        <div class="mt-5">
+            <h2 class="h4">Répartition des dons par montants :</h2>
+            <div class="graphSizes">
+                <canvas id="barChart" data-donations-amount="{{ donationsAmount }}" data-nbOfPeople-donations="{{ nbOfPeopleDonations }}"></canvas>
+            </div>
+        </div>
+        <div class="mt-5">
+            <h2 class="h4 ml-2">Répartition des donateurs :</h2>
+            <div class="graphSizes pieChart">
+                <canvas id="pieChart" data-ten-departments-count-people="{{ tenDepartmentsCountPeople }}" data-ten-departments-numbers="{{ tenDepartmentsNumbers }}"></canvas>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -40,7 +40,8 @@ class DonationRepository
     {
         $query = 'SELECT COUNT(phone_number) AS nbOfPeople, total_amount
             FROM donation
-            GROUP BY total_amount;
+            GROUP BY total_amount
+            ORDER BY total_amount DESC ;
             ';
         return $this->pdo->query($query)->fetchAll();
     }

@@ -18,9 +18,10 @@ class DashboardController extends AbstractController
      */
     public function index(DonationRepository $donationRepository, UserLocationRepository $userLocationRepository): Response
     {
-        $tenDepartmentsPeople = array_merge(array_column($userLocationRepository->getStatisticsPerDepartment()['tenDepartments'], 'nbOfPeople'), array_column($userLocationRepository->getStatisticsPerDepartment()["otherDepartments"], 'nbOfPeople'));
+        $tenDepartmentsPeople = array_column($userLocationRepository->getStatisticsPerDepartment()['tenDepartments'], 'nbOfPeople');
         $tenDepartmentsNumber = array_column($userLocationRepository->getStatisticsPerDepartment()['tenDepartments'], 'departments');
         $tenDepartmentsNumber[] = "Autres";
+        $tenDepartmentsPeople[] = $userLocationRepository->getStatisticsPerDepartment()["otherDepartments"]['nbOfPeople'];
 
         return $this->render('dashboard/index.html.twig', [
             'donationsAmount' => json_encode(array_column($donationRepository->getCountOfPeoplePerAmount(), 'total_amount')),

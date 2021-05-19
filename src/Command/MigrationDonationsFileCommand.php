@@ -60,7 +60,6 @@ class MigrationDonationsFileCommand extends Command
         return Command::SUCCESS;
     }
 
-
     public function createDataBase()
     {
         $query = 'CREATE DATABASE test_manon_marizy;';
@@ -86,5 +85,4 @@ class MigrationDonationsFileCommand extends Command
         }
 
     }
-
 }
